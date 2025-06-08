@@ -1,0 +1,66 @@
+Documentación del Proyecto: GoodsReads
+1. Introducción
+En la actualidad, el acceso a la información y la interacción digital en torno al conocimiento han cobrado una relevancia esencial. Las plataformas centradas en la recomendación y reseña de contenidos, especialmente en el ámbito cultural y literario, se han convertido en herramientas clave para canalizar opiniones, descubrir nuevas obras y generar comunidad. En este contexto, surge GoodsReads, una aplicación web diseñada para ofrecer un espacio donde los usuarios puedan explorar, valorar y comentar libros, fomentando la participación activa y el intercambio de ideas.
+GoodsReads nace con el propósito de aunar simplicidad técnica y riqueza funcional. A diferencia de soluciones más complejas basadas en bases de datos relacionales y sistemas pesados de backend, este proyecto opta por un enfoque alternativo: el almacenamiento orientado a objetos sobre Redis, gestionado mediante la biblioteca Sirope. Esta elección no solo proporciona una mayor eficiencia en términos de velocidad y simplicidad estructural, sino que también favorece una mayor fluidez en el desarrollo, al evitar los costes típicos del mapeo objeto-relacional.
+Desde el punto de vista arquitectónico, la aplicación está desarrollada en Python utilizando el microframework Flask, lo que permite mantener una estructura modular basada en Blueprints. Esta organización facilita tanto la escalabilidad como la mantenibilidad del código. En cuanto al frontend, se emplea HTML5, Jinja2 y Bootstrap, lo que garantiza una interfaz clara, accesible y adaptable a distintos dispositivos.
+En términos funcionales, GoodsReads permite a los usuarios realizar operaciones básicas sobre libros —como añadir, editar o puntuar— así como participar activamente comentando y votando comentarios ajenos. Además, incluye un sistema de autenticación y perfiles personales, lo que enriquece la experiencia de usuario y aporta una dimensión social al uso de la plataforma.
+Este documento describe en detalle el diseño, implementación y arquitectura de la aplicación, así como los diagramas que ilustran tanto su estructura interna como la experiencia de usuario. Se abordan también las decisiones tecnológicas adoptadas y su justificación, destacando las ventajas de utilizar una base de datos clave-valor con persistencia de objetos frente a enfoques más tradicionales.
+2. Objetivos
+•	Permitir a los usuarios registrarse e iniciar sesión de forma segura.
+•	Gestionar una base de datos de libros: agregar, editar, visualizar.
+•	Permitir la puntuación de libros y comentarios por parte de los usuarios.
+•	Ofrecer un sistema de comentarios con votos positivos y negativos.
+•	Facilitar la navegación a través de plantillas HTML organizadas.
+3. Estructura del Proyecto
+La organización general del proyecto sigue una estructura modular con carpetas dedicadas a distintas funcionalidades:
+•	src/
+o	auth/: manejo de autenticación (login, registro).
+o	books/: lógica para el manejo de libros.
+o	comments/: gestión de comentarios y votos.
+o	models/: definición de clases ORM como Usuario, Libro, Comentario, Puntuacion, VotoComentario.
+o	templates/: páginas HTML como home.html, add_book.html, login.html, etc.
+App.py: Se ejecuta el proyecto.
+4. Tecnologías Utilizadas
+ Backend: Python 3.8+ y Flask
+El núcleo lógico de la aplicación está desarrollado en Python, un lenguaje de programación de alto nivel, multiplataforma y ampliamente adoptado tanto en el ámbito académico como profesional. Se ha utilizado la versión 3.8 o superior, que garantiza compatibilidad con librerías modernas y una sintaxis clara.
+El framework web elegido es Flask, un microframework minimalista pero potente que permite desarrollar aplicaciones web de forma rápida, flexible y modular. Flask se basa en WSGI y proporciona todas las herramientas necesarias para crear rutas, manejar peticiones HTTP y gestionar sesiones de usuario. Gracias a su arquitectura basada en Blueprints, el proyecto se ha organizado en módulos independientes (libros, comentarios, autenticación), lo que facilita su mantenimiento y escalabilidad.
+________________________________________
+Frontend: HTML5 y Jinja2
+La interfaz de usuario ha sido desarrollada utilizando HTML5, el estándar actual para el marcado de contenido web. HTML5 permite construir páginas más semánticas, accesibles y compatibles con dispositivos móviles.
+Para el renderizado dinámico del contenido desde el servidor, se emplea Jinja2, el motor de plantillas por defecto en Flask. Jinja2 permite combinar lógica y diseño de forma sencilla, insertando datos directamente en las vistas HTML mediante expresiones del tipo {{ variable }} y estructuras de control ({% if %}, {% for %}, etc.), lo cual reduce la redundancia de código y mejora la experiencia del usuario.
+________________________________________
+ Base de Datos: Sirope sobre Redis
+El almacenamiento de datos se ha resuelto mediante una combinación de Sirope y Redis. Redis es una base de datos clave-valor en memoria, extremadamente rápida y eficiente, que se utiliza aquí como motor de persistencia. Sobre Redis se ejecuta Sirope, una biblioteca de persistencia de objetos para Python.
+Sirope permite almacenar directamente instancias de clases Python como objetos serializados, eliminando la necesidad de transformar datos a modelos relacionales. Esta aproximación ofrece un modelo más natural en entornos orientados a objetos, simplifica el desarrollo al evitar el uso de ORMs, y permite una integración directa entre lógica de aplicación y persistencia.
+________________________________________
+ Otros: Bootstrap y Blueprints de Flask
+•	Bootstrap es un framework CSS que facilita el diseño de interfaces limpias y responsivas. Gracias a sus componentes predefinidos y a su sistema de grid flexible, ha sido posible construir un frontend estéticamente agradable y adaptado a múltiples resoluciones sin necesidad de escribir CSS desde cero.
+•	Blueprints es el sistema de modularización de Flask. Permite dividir la aplicación en componentes lógicos independientes (como auth, books, comments), cada uno con sus propias rutas, vistas y lógica. Esta división fomenta una mejor organización del código, facilita el trabajo en equipo y permite ampliar la aplicación de forma ordenada.
+
+5. Funcionalidades Principales
+a. Autenticación
+Sistema de registro y login con control de sesiones y validación de credenciales.
+b. Gestión de Libros
+Los usuarios pueden:
+•	Añadir libros
+•	Editarlos
+•	Visualizarlos individualmente
+c. Sistema de Comentarios y Puntuaciones
+•	Cada libro puede tener múltiples comentarios.
+•	Los comentarios pueden ser votados (positivo o negativo).
+•	Los libros pueden recibir puntuaciones del 1 al 5.
+d. Perfiles de Usuario
+Cada usuario tiene un perfil donde puede ver sus libros comentados y puntuados.
+________________________________________
+6. Diagramas del Proyecto(abajo)
+Diagrama de Clases (UML):  
+Diagrama de Flujo de la Aplicación:  
+Wireframes de Interfaz: 
+______________________________________
+7. Conclusión
+El desarrollo de GoodsReads ha representado una oportunidad para integrar y aplicar de forma práctica múltiples conceptos fundamentales en el diseño y construcción de aplicaciones web modernas. A lo largo del proyecto, se han abordado aspectos clave como la modularización del backend, la estructuración lógica de la información, la interacción dinámica en el frontend y la persistencia eficiente de datos mediante tecnologías no convencionales.
+Uno de los pilares diferenciadores de esta aplicación ha sido la elección de Sirope sobre Redis como sistema de almacenamiento. Este enfoque ha permitido adoptar un modelo orientado a objetos puro, sin depender de esquemas relacionales ni transformaciones innecesarias. Gracias a ello, la serialización y recuperación de entidades como libros, usuarios o comentarios se realiza de manera natural, directa y altamente eficiente. Además, el uso de Redis como backend en memoria proporciona una base sólida en términos de rendimiento, escalabilidad y simplicidad.
+Desde el punto de vista arquitectónico, el uso de Flask en conjunto con Blueprints ha favorecido un diseño modular, mantenible y fácilmente extensible. Esta estructura facilita la evolución futura del sistema, permitiendo la incorporación de nuevas funcionalidades (por ejemplo, filtros de búsqueda, rankings personalizados o recomendaciones automáticas) sin comprometer la estabilidad del núcleo actual. En el plano visual, el uso de HTML5, Bootstrap y Jinja2 ha contribuido a generar una interfaz limpia, intuitiva y adaptativa que mejora la experiencia del usuario final.
+Más allá de los aspectos técnicos, GoodsReads pone en valor la importancia de crear plataformas colaborativas que fomenten la cultura, el pensamiento crítico y la interacción social a través de herramientas accesibles y bien diseñadas. Este trabajo no solo refleja competencias en desarrollo de software, sino también una comprensión profunda de cómo las decisiones tecnológicas impactan directamente en la experiencia, eficiencia y sostenibilidad de un producto digital.
+Como cierre, se puede afirmar que GoodsReads sienta unas bases sólidas para convertirse en una aplicación completa, escalable y lista para evolucionar en múltiples direcciones. Su diseño flexible, su persistencia eficiente y su orientación a objetos lo convierten en un excelente punto de partida para proyectos más ambiciosos dentro del ámbito educativo, cultural o social.
+

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ libro.titulo }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+
+    <h1 class="mb-4 text-primary">{{ libro.titulo }}</h1>
+
+    <p class="lead"><strong>Autor:</strong> <span class="text-dark">{{ libro.autor }}</span></p>
+    
+    <p><strong>Añadido por:</strong> 
+        <a href="{{ url_for('books.profile', usuario_email=libro.usuario_email) }}" class="text-decoration-none text-primary fw-bold">
+            {{ libro.usuario_email }}
+        </a>
+    </p>
+
+    <p><strong>Puntuación media:</strong> 
+        {% if puntuaciones %}
+            {% set media = (puntuaciones | sum(attribute='valor')) / puntuaciones|length %}
+            {% for i in range(1, 6) %}
+                {% if media >= i %}
+                    ⭐
+                {% elif media >= i - 0.5 %}
+                ✨
+                {% else %}
+                    ☆
+                {% endif %}
+            {% endfor %}
+            ({{ "%.2f" | format(media) }} / 5)
+        {% else %}
+            Sin puntuaciones aún
+        {% endif %}
+    </p>
+
+    {% if current_user.is_authenticated and (current_user.is_admin() or current_user.email == libro.usuario_email) %}
+        <form action="{{ url_for('books.delete_book', libro_titulo=libro.titulo) }}" method="POST" class="d-inline">
+            <input type="submit" class="btn btn-danger" value="Borrar libro">
+        </form>
+        <a href="{{ url_for('books.edit_book', libro_titulo=libro.titulo) }}" class="btn btn-primary btn-sm">Editar libro</a>
+    {% endif %}
+
+    <hr>
+
+    <h3>Votar este libro:</h3>
+    <form action="{{ url_for('books.rate_book', libro_titulo=libro.titulo) }}" method="POST" class="mb-4">
+        <select name="valor" class="form-select w-25" required>
+            <option value="1">1 estrella</option>
+            <option value="2">2 estrellas</option>
+            <option value="3">3 estrellas</option>
+            <option value="4">4 estrellas</option>
+            <option value="5">5 estrellas</option>
+        </select>
+        <input type="submit" class="btn btn-primary mt-2" value="Votar">
+    </form>
+
+    <h3>Comentarios:</h3>
+<ul class="list-group mb-4">
+{% for comentario in comentarios if not comentario.comentario_padre %}
+    <li class="list-group-item">
+        <strong>{{ comentario.usuario_email }}</strong>: {{ comentario.texto }}
+
+<form action="{{ url_for('comments.vote_comment', libro_titulo=libro.titulo, comentario_id=comentario.id) }}" method="POST" class="d-inline ms-2">
+    <input type="hidden" name="valor" value="1">
+    <button type="submit" class="btn btn-sm btn-outline-success">👍</button>
+    <span class="ms-1">{{ votos.get(comentario.id, 0) }}</span>
+</form>
+
+
+
+
+        {% for respuesta in comentarios if respuesta.comentario_padre == comentario.texto %}
+            <div class="ms-4 mt-2 bg-light p-2 border rounded">
+                <strong>{{ respuesta.usuario_email }}</strong>: {{ respuesta.texto }}
+
+            </div>
+        {% endfor %}
+
+        <form action="{{ url_for('comments.reply_comment', libro_titulo=libro.titulo, parent_texto=comentario.texto) }}" method="POST" class="mt-2">
+            <input type="text" name="texto" class="form-control" placeholder="Responder..." required>
+            <input type="submit" class="btn btn-primary btn-sm mt-1" value="Responder">
+        </form>
+
+        {% if current_user.is_authenticated and (current_user.is_admin() or current_user.email == comentario.usuario_email) %}
+            <form action="{{ url_for('comments.delete_comment', libro_titulo=libro.titulo, comentario_id=comentario.id) }}" method="POST" class="mt-2">
+
+                <input type="submit" class="btn btn-danger btn-sm" value="Borrar comentario">
+            </form>
+        {% endif %}
+    </li>
+{% endfor %}
+</ul>
+
+
+    <h3>Añadir comentario:</h3>
+    <form action="{{ url_for('comments.add_comment', libro_titulo=libro.titulo) }}" method="POST" class="mb-4">
+        <input type="text" name="texto" class="form-control" placeholder="Escribe tu comentario..." required>
+        <input type="submit" class="btn btn-primary mt-2" value="Comentar">
+    </form>
+
+    <a href="{{ url_for('books.home') }}" class="btn btn-primary">Volver al Home</a>
+
+</div>
+
+</body>
+</html>
