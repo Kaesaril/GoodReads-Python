@@ -1,3 +1,1 @@
 "Goodreads Simple" - Aplicación web que permite a los usuarios registrar, consultar, comentar y puntuar libros en un entorno sencillo e intuitivo.
-Nieto González, César
-45161582R
